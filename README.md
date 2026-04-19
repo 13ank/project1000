@@ -16,17 +16,6 @@ ScholarPath ช่วยให้นักศึกษา มทส ไม่พ
 
 ---
 
-## 👥 สมาชิกกลุ่ม
-
-| ชื่อ-นามสกุล | รหัสนักศึกษา | หน้าที่ |
-|---|---|---|
-| [กรอกชื่อ] | [รหัส] | TCP Socket Server/Client |
-| [กรอกชื่อ] | [รหัส] | SMTP Email Sender |
-| [กรอกชื่อ] | [รหัส] | Flask Web Application |
-| [กรอกชื่อ] | [รหัส] | Database + Matcher |
-| [กรอกชื่อ] | [รหัส] | Scraper + Design Doc |
-
----
 
 ## 🌐 Network Programming ที่ใช้
 
