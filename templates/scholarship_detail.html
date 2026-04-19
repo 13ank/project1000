@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}รายละเอียดทุน{% endblock %}
+
+{% block extra_css %}
+<style>
+    .detail-wrap {
+        max-width: 900px;
+        margin: 2rem auto;
+    }
+
+    .detail-card {
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+        overflow: hidden;
+    }
+
+    .detail-head {
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        color: white;
+        padding: 2rem;
+    }
+
+    .detail-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-top: .5rem;
+    }
+
+    .detail-body {
+        padding: 2rem;
+    }
+
+    .detail-meta {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .meta-box {
+        background: #f8f8f8;
+        border-radius: 10px;
+        padding: 1rem;
+    }
+
+    .meta-label {
+        font-size: .8rem;
+        color: #777;
+        margin-bottom: .3rem;
+    }
+
+    .meta-value {
+        font-weight: 700;
+    }
+
+    .detail-desc {
+        line-height: 1.8;
+        color: #333;
+        white-space: pre-line;
+    }
+
+    .detail-actions {
+        margin-top: 2rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container detail-wrap">
+    <div class="detail-card">
+
+        <div class="detail-head">
+            <div>{{ scholarship.source }}</div>
+            <div class="detail-title">{{ scholarship.title }}</div>
+            <div style="margin-top:.8rem;">
+                {% if scholarship.days_left <= 1 %} 🚨 พรุ่งนี้หมดเขต {% elif scholarship.days_left <=7 %} ⚠️ เหลือ {{
+                    scholarship.days_left }} วัน {% else %} 📅 เหลือ {{ scholarship.days_left }} วัน {% endif %} </div>
+            </div>
+
+            <div class="detail-body">
+                <div class="detail-meta">
+                    <div class="meta-box">
+                        <div class="meta-label">จำนวนทุน</div>
+                        <div class="meta-value">
+                            {% if scholarship.amount and scholarship.amount > 0 %}
+                            ฿{{ "{:,.0f}".format(scholarship.amount) }}
+                            {% else %}
+                            เรียนฟรี / ไม่ระบุ
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="meta-box">
+                        <div class="meta-label">วันหมดเขต</div>
+                        <div class="meta-value">{{ scholarship.deadline }}</div>
+                    </div>
+
+                    <div class="meta-box">
+                        <div class="meta-label">GPA ขั้นต่ำ</div>
+                        <div class="meta-value">{{ scholarship.min_gpa }}</div>
+                    </div>
+
+                    <div class="meta-box">
+                        <div class="meta-label">ระดับการศึกษา</div>
+                        <div class="meta-value">{{ scholarship.level }}</div>
+                    </div>
+
+                    <div class="meta-box">
+                        <div class="meta-label">คณะ</div>
+                        <div class="meta-value">{{ scholarship.faculty }}</div>
+                    </div>
+
+                    <div class="meta-box">
+                        <div class="meta-label">สัญชาติ</div>
+                        <div class="meta-value">{{ scholarship.nationality }}</div>
+                    </div>
+                </div>
+
+                <h3>รายละเอียดทุน</h3>
+                <div class="detail-desc">
+                    {{ scholarship.description or "ยังไม่มีรายละเอียดเพิ่มเติม" }}
+                </div>
+
+                <div class="detail-actions">
+                    {% if scholarship.apply_url %}
+                    <a href="{{ scholarship.apply_url }}" target="_blank" class="btn btn-primary">
+                        ไปหน้าต้นฉบับ / สมัคร →
+                    </a>
+                    {% endif %}
+
+                    <a href="/scholarships" class="btn btn-outline">
+                        ← กลับไปหน้าทุนทั้งหมด
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endblock %}

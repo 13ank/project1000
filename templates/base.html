@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScholarPath มทส — {% block title %}{% endblock %}</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Sarabun:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0d0d0d;
+      --gold: #c9a84c;
+      --gold-light: #e8d5a3;
+      --paper: #f5f0e8;
+      --cream: #fdf8ef;
+      --border: #d4c9a8;
+      --rust: #8b3a2a;
+      --sage: #4a6741;
+
+      --dark: #1a202c;
+      --dark2: #2d3748;
+      --dark3: #4a5568;
+      --orange: #ff6b2b;
+      --orange-light: #fff3e0;
+      --white: #ffffff;
+      --light: #f7fafc;
+      --text: #2d3748;
+      --text-light: #718096;
+      --radius: 12px;
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fade-up {
+      animation: fadeUp 0.6s ease forwards;
+      opacity: 0;
+    }
+
+    .delay-1 {
+      animation-delay: 0.1s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.2s;
+    }
+
+    .delay-3 {
+      animation-delay: 0.3s;
+    }
+
+    .delay-4 {
+      animation-delay: 0.4s;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    nav {
+      background: var(--ink);
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid var(--gold);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    .logo span {
+      font-size: 0.7rem;
+      color: var(--gold-light);
+      font-family: 'Sarabun', sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      margin-left: 0.5rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: var(--gold-light);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--gold);
+    }
+
+    .nav-links a.active {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .nav-links a.btn {
+      background: var(--gold);
+      color: var(--ink);
+      padding: 0.4rem 1rem;
+      font-weight: 600;
+      font-size: 0.8rem;
+      border-radius: 4px;
+    }
+
+    .nav-links a.btn:hover {
+      background: var(--gold-light);
+    }
+
+    /* Profile badge ใน navbar */
+    .nav-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gold-light);
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid #333;
+      border-radius: 20px;
+      transition: all 0.2s;
+    }
+
+    .nav-profile:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .nav-profile-avatar {
+      width: 26px;
+      height: 26px;
+      background: linear-gradient(135deg, var(--gold), #a07830);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .card {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-urgent {
+      background: var(--rust);
+      color: #fff;
+    }
+
+    .badge-warning {
+      background: #e65100;
+      color: #fff;
+    }
+
+    .badge-normal {
+      background: var(--sage);
+      color: #fff;
+    }
+
+    .badge-soon {
+      background: var(--gold);
+      color: var(--ink);
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--ink);
+      border: none;
+      padding: 0.6rem 1.5rem;
+      font-family: 'Sarabun', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+      border-radius: 4px;
+    }
+
+    .btn-primary:hover {
+      background: var(--gold-light);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--ink);
+      border: 1.5px solid var(--border);
+      padding: 0.6rem 1.5rem;
+      font-family: 'Sarabun', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 1.5px solid var(--border);
+      background: var(--cream);
+      font-family: 'Sarabun', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+      border-radius: 6px;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--gold);
+    }
+
+    label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #888;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+
+    .form-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      text-transform: none;
+      letter-spacing: 0;
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      font-family: 'Sarabun', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      border-radius: 8px;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--orange);
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .alert-error {
+      background: #fdecea;
+      border: 1px solid #f5c6cb;
+      color: var(--rust);
+      padding: 0.8rem 1rem;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+    }
+
+    footer {
+      background: var(--ink);
+      color: #666;
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.78rem;
+      border-top: 2px solid #222;
+      margin-top: 3rem;
+    }
+
+    footer span {
+      color: var(--gold);
+    }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+  {% if session.student_name %}
+  <nav>
+    <a href="/dashboard" class="logo">ScholarPath <span>มทส</span></a>
+    <div class="nav-links">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/scholarships">ทุนทั้งหมด</a>
+      <a href="/bookmarks">⭐ Bookmark</a>
+      <a href="/profile" class="nav-profile">
+        <div class="nav-profile-avatar">👤</div>
+        {{ session.student_name.split()[0] }}
+      </a>
+      <a href="/logout" class="btn">ออกจากระบบ</a>
+    </div>
+  </nav>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+
+  <footer>
+    <span>ScholarPath</span> — ระบบแจ้งเตือนทุนการศึกษา มหาวิทยาลัยเทคโนโลยีสุรนารี
+  </footer>
+</body>
+
+</html>

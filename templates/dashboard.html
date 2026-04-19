@@ -1,0 +1,514 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+  .hero-banner {
+    background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 50%, var(--dark3) 100%);
+    padding: 2.5rem 0;
+    border-bottom: 3px solid var(--orange);
+  }
+
+  .hero-greeting {
+    font-family: 'Sarabun', sans-serif;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, .6);
+  }
+
+  .hero-name {
+    font-family: 'Sarabun', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  .hero-name span {
+    background: linear-gradient(135deg, var(--orange), var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* ── Stats Grid ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .06);
+    border-top: 4px solid transparent;
+    transition: transform 0.2s;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .stat-card.orange {
+    border-top-color: #ff6b2b;
+  }
+
+  .stat-card.red {
+    border-top-color: #e53e3e;
+  }
+
+  .stat-card.green {
+    border-top-color: #38a169;
+  }
+
+  .stat-card.gold {
+    border-top-color: #c9a84c;
+  }
+
+  .stat-card.blue {
+    border-top-color: #3182ce;
+  }
+
+  .stat-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .stat-icon-box.orange {
+    background: #fff3e0;
+  }
+
+  .stat-icon-box.red {
+    background: #fff5f5;
+  }
+
+  .stat-icon-box.green {
+    background: #f0fff4;
+  }
+
+  .stat-icon-box.gold {
+    background: #fffff0;
+  }
+
+  .stat-icon-box.blue {
+    background: #ebf8ff;
+  }
+
+  .stat-num {
+    font-family: 'Sarabun', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .stat-num.orange {
+    color: #ff6b2b;
+  }
+
+  .stat-num.red {
+    color: #e53e3e;
+  }
+
+  .stat-num.green {
+    color: #38a169;
+  }
+
+  .stat-num.gold {
+    color: #c9a84c;
+  }
+
+  .stat-num.blue {
+    color: #3182ce;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: #718096;
+    margin-top: 0.2rem;
+  }
+
+  .stat-sub {
+    font-size: 0.72rem;
+    color: #a0aec0;
+    margin-top: 0.1rem;
+  }
+
+  /* ── Dashboard Grid ── */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 1.5rem;
+  }
+
+  .scholarship-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.2rem;
+    margin-bottom: .8rem;
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+    border-left: 4px solid var(--orange);
+    transition: transform 0.2s;
+  }
+
+  .scholarship-card:hover {
+    transform: translateX(4px);
+  }
+
+  .scholarship-card.urgent {
+    border-left-color: #e53e3e;
+  }
+
+  .scholarship-card.soon {
+    border-left-color: #ed8936;
+  }
+
+  .s-title {
+    font-family: 'Sarabun';
+    font-weight: 600;
+  }
+
+  .days-badge {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .days-badge.urgent {
+    color: #e53e3e;
+  }
+
+  .days-badge.soon {
+    color: #ed8936;
+  }
+
+  .days-badge.normal {
+    color: #38a169;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.3rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .06);
+    margin-bottom: 1rem;
+  }
+
+  .sidebar-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .profile-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff7a18, #ffd200);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    position: relative;
+    margin-bottom: 12px;
+  }
+
+  .online-status {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 12px;
+    height: 12px;
+    background: #22c55e;
+    border-radius: 50%;
+    border: 2px solid white;
+  }
+
+  .profile-row {
+    display: flex;
+    justify-content: space-between;
+    padding: .45rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: .85rem;
+  }
+
+  .profile-row:last-child {
+    border-bottom: none;
+  }
+
+  .gpa-badge {
+    background: linear-gradient(135deg, var(--orange), var(--gold));
+    color: white;
+    padding: .15rem .6rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .notif-item {
+    display: flex;
+    gap: .5rem;
+    padding: .6rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: .82rem;
+  }
+
+  .notif-item:last-child {
+    border-bottom: none;
+  }
+
+  .notif-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--orange);
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #888;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .section-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .section-header a {
+    font-size: 0.8rem;
+    color: var(--orange);
+    text-decoration: none;
+  }
+
+  .section-header a:hover {
+    text-decoration: underline;
+  }
+
+  @media(max-width:768px) {
+    .stats-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="hero-banner">
+  <div class="container">
+    <div class="hero-greeting">สวัสดีครับ/ค่ะ</div>
+    <div class="hero-name">
+      ยินดีต้อนรับ <span>{{ student.name | default("Student") }}</span>
+    </div>
+    <div style="color:rgba(255,255,255,.5); font-size:0.9rem; margin-top:0.3rem;">
+      มหาวิทยาลัยเทคโนโลยีสุรนารี · ระบบแจ้งเตือนทุนการศึกษา
+    </div>
+  </div>
+</div>
+
+<div class="container" style="padding-top:1.5rem; padding-bottom:2rem;">
+
+  <!-- ── STATS ── -->
+  {% set urgent_count = scholarships | selectattr('days_left', 'le', 7) | list | length %}
+  {% set bookmark_count = bookmarked_ids | length %}
+
+  <div class="stats-grid">
+
+    <div class="stat-card orange animate-fade-up delay-1">
+      <div class="stat-icon-box orange">🎓</div>
+      <div>
+        <div class="stat-num orange">{{ scholarships | length }}</div>
+        <div class="stat-label">ทุนที่เข้าเกณฑ์</div>
+        <div class="stat-sub">ตรงกับโปรไฟล์ของคุณ</div>
+      </div>
+    </div>
+
+    <div class="stat-card red animate-fade-up delay-2">
+      <div class="stat-icon-box red">🚨</div>
+      <div>
+        <div class="stat-num red">{{ urgent_count }}</div>
+        <div class="stat-label">ใกล้หมดเขต</div>
+        <div class="stat-sub">ภายใน 7 วันนี้</div>
+      </div>
+    </div>
+
+    <div class="stat-card gold animate-fade-up delay-3">
+      <div class="stat-icon-box gold">⭐</div>
+      <div>
+        <div class="stat-num gold">{{ bookmark_count }}</div>
+        <div class="stat-label">Bookmark</div>
+        <div class="stat-sub">ทุนที่บันทึกไว้</div>
+      </div>
+    </div>
+
+    <div class="stat-card green animate-fade-up delay-4">
+      <div class="stat-icon-box green">📊</div>
+      <div>
+        <div class="stat-num green">{{ student.gpa }}</div>
+        <div class="stat-label">GPA ของคุณ</div>
+        <div class="stat-sub">{{ student.faculty }}</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── MAIN CONTENT ── -->
+  <div class="dashboard-grid">
+
+    <!-- ทุนที่เข้าเกณฑ์ -->
+    <div>
+      <div class="section-header">
+        <h3>🎯 ทุนที่คุณเข้าเกณฑ์</h3>
+        <a href="/scholarships">ดูทั้งหมด →</a>
+      </div>
+
+      {% if scholarships %}
+      {% for s in scholarships %}
+      <div class="scholarship-card {% if s.days_left <= 1 %}urgent{% elif s.days_left <= 7 %}soon{% endif %}">
+        <div style="flex:1;">
+          <div class="s-title">
+            {% if s.apply_url %}
+            <a href="{{ s.apply_url }}" target="_blank" style="text-decoration:none; color:inherit;">
+              {{ s.title }}
+            </a>
+            {% else %}
+            {{ s.title }}
+            {% endif %}
+          </div>
+          <div style="font-size:.8rem; color:#777; margin-top:3px;">
+            {{ s.source }} · GPA ≥ {{ s.min_gpa }} · {{ s.level }}
+          </div>
+          {% if s.amount and s.amount > 0 %}
+          <div style="font-size:.82rem; color:#ff6b2b; font-weight:600; margin-top:4px;">
+            ฿{{ "{:,.0f}".format(s.amount) }}
+          </div>
+          {% endif %}
+        </div>
+
+        <div style="text-align:right; min-width:80px;">
+          {% if s.days_left <= 1 %} <div class="days-badge urgent">{{ s.days_left }}</div>
+        <div style="font-size:.65rem; color:#e53e3e; font-weight:600;">วัน — ด่วน!</div>
+        {% elif s.days_left <= 7 %} <div class="days-badge soon">{{ s.days_left }}
+      </div>
+      <div style="font-size:.65rem; color:#ed8936;">วันที่เหลือ</div>
+      {% else %}
+      <div class="days-badge normal">{{ s.days_left }}</div>
+      <div style="font-size:.65rem; color:#718096;">วันที่เหลือ</div>
+      {% endif %}
+      {% if s.apply_url %}
+      <a href="{{ s.apply_url }}" target="_blank" class="btn btn-primary"
+        style="margin-top:6px; font-size:11px; padding:4px 10px;">
+        สมัคร →
+      </a>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+
+  {% else %}
+  <div class="empty-state">
+    <div style="font-size:40px;">🔍</div>
+    <div>ไม่พบทุนที่เข้าเกณฑ์ในขณะนี้</div>
+    <div style="font-size:0.8rem; margin-top:0.5rem;">ลองอัปเดต GPA หรือข้อมูลใน Profile ของคุณ</div>
+    <a href="/profile" class="btn btn-primary" style="margin-top:1rem; font-size:0.82rem;">
+      แก้ไข Profile →
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+<!-- SIDEBAR -->
+<div>
+
+  <!-- โปรไฟล์ -->
+  <div class="sidebar-card">
+    <div class="sidebar-title">👤 โปรไฟล์ของคุณ</div>
+    <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:1rem;">
+      <div class="profile-avatar">
+        {{ student.name[0] | upper }}
+        <div class="online-status"></div>
+      </div>
+      <div style="font-weight:700; font-size:0.95rem;">{{ student.name }}</div>
+      <div style="font-size:0.78rem; color:#718096;">{{ student.email }}</div>
+    </div>
+    <div>
+      <div class="profile-row">
+        <span>GPA</span>
+        <span class="gpa-badge">{{ student.gpa }}</span>
+      </div>
+      <div class="profile-row">
+        <span>สำนักวิชา</span>
+        <span style="font-size:0.8rem; text-align:right; max-width:160px;">{{ student.faculty }}</span>
+      </div>
+      <div class="profile-row">
+        <span>ระดับ</span>
+        <span>{{ student.level }}</span>
+      </div>
+      <div class="profile-row">
+        <span>สัญชาติ</span>
+        <span>{{ student.nationality }}</span>
+      </div>
+    </div>
+    <a href="/profile" class="btn btn-primary"
+      style="width:100%; justify-content:center; margin-top:1rem; font-size:0.82rem;">
+      ✏️ แก้ไขโปรไฟล์
+    </a>
+  </div>
+
+  <!-- การแจ้งเตือนล่าสุด -->
+  <div class="sidebar-card">
+    <div class="sidebar-title">🔔 การแจ้งเตือนล่าสุด</div>
+    {% if notifications %}
+    {% for n in notifications %}
+    <div class="notif-item">
+      <div class="notif-dot"></div>
+      <div>
+        <div style="font-weight:600;">{{ n.title }}</div>
+        <div style="font-size:.7rem; color:#888;">{{ n.sent_at }}</div>
+      </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div style="text-align:center; color:#888; padding:1rem 0; font-size:0.85rem;">
+      📭 ยังไม่มีการแจ้งเตือน
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+</div>
+
+</div>
+{% endblock %}

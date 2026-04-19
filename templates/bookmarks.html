@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+{% block title %}Bookmark ของฉัน{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 100%);
+        padding: 2.5rem 0;
+        border-bottom: 3px solid var(--gold);
+    }
+
+    .page-header-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: white;
+    }
+
+    .page-title span {
+        background: linear-gradient(135deg, #c9a84c, #e8d5a3);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .page-subtitle {
+        color: rgba(255, 255, 255, .5);
+        font-size: 0.9rem;
+        margin-top: 0.3rem;
+    }
+
+    .count-badge {
+        background: linear-gradient(135deg, var(--gold), #a07830);
+        color: white;
+        padding: 0.5rem 1.2rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+
+    .bookmark-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 1.2rem;
+        margin-top: 1.5rem;
+    }
+
+    .bookmark-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, .07);
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: 1px solid #f0f0f0;
+    }
+
+    .bookmark-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+    }
+
+    .bookmark-card-top {
+        background: linear-gradient(135deg, #1a202c, #2d3748);
+        padding: 1.2rem;
+        color: white;
+        position: relative;
+    }
+
+    .bookmark-card-top.urgent {
+        background: linear-gradient(135deg, #742a2a, #c53030);
+    }
+
+    .bookmark-card-top.soon {
+        background: linear-gradient(135deg, #7b341e, #c05621);
+    }
+
+    .bookmark-source {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, .6);
+        margin-bottom: 0.3rem;
+    }
+
+    .bookmark-title {
+        font-weight: 700;
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+
+    .bookmark-deadline {
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .star-icon {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .bookmark-card-body {
+        padding: 1rem 1.2rem;
+    }
+
+    .bookmark-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-bottom: 0.8rem;
+    }
+
+    .bookmark-tag {
+        background: #f4f4f4;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        color: #555;
+    }
+
+    .bookmark-card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 0.8rem;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .bookmark-amount {
+        font-weight: 700;
+        color: #ff6b2b;
+        font-size: 1rem;
+    }
+
+    .remove-btn {
+        background: none;
+        border: 1px solid #fed7d7;
+        color: #e53e3e;
+        padding: 5px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        font-family: 'Sarabun', sans-serif;
+        transition: all 0.2s;
+    }
+
+    .remove-btn:hover {
+        background: #fff5f5;
+        border-color: #e53e3e;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #888;
+    }
+
+    .empty-state .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        color: #555;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div class="container">
+        <div class="page-header-inner">
+            <div>
+                <div class="page-title">⭐ <span>Bookmark</span> ของฉัน</div>
+                <div class="page-subtitle">ทุนการศึกษาที่คุณบันทึกไว้</div>
+            </div>
+            <div class="count-badge">{{ scholarships|length }} ทุน</div>
+        </div>
+    </div>
+</div>
+
+<div class="container" style="padding-bottom: 2rem;">
+
+    {% if scholarships %}
+
+    <div class="bookmark-grid">
+        {% for s in scholarships %}
+
+        <div class="bookmark-card" id="card-{{ s.id }}">
+
+            <div class="bookmark-card-top
+        {% if s.days_left <= 1 %}urgent
+        {% elif s.days_left <= 7 %}soon{% endif %}">
+
+                <div class="star-icon">⭐</div>
+                <div class="bookmark-source">{{ s.source }}</div>
+                <div class="bookmark-title">{{ s.title }}</div>
+                <div class="bookmark-deadline">
+                    {% if s.days_left <= 1 %} 🚨 พรุ่งนี้หมดเขต! {% elif s.days_left <=7 %} ⚠️ เหลือ {{ s.days_left }}
+                        วัน {% else %} 📅 เหลือ {{ s.days_left }} วัน ({{ s.deadline }}) {% endif %} </div>
+                </div>
+
+                <div class="bookmark-card-body">
+                    <div style="font-size:0.85rem; color:#555; margin-bottom:0.8rem; line-height:1.5;">
+                        {{ s.description[:100] }}{% if s.description|length > 100 %}...{% endif %}
+                    </div>
+
+                    <div class="bookmark-tags">
+                        <span class="bookmark-tag">📚 {{ s.level }}</span>
+                        <span class="bookmark-tag">📊 GPA ≥ {{ s.min_gpa }}</span>
+                        <span class="bookmark-tag">🌏 {{ s.nationality }}</span>
+                        <span class="bookmark-tag">🏫 {{ s.faculty }}</span>
+                    </div>
+
+                    <div class="bookmark-card-footer">
+                        <div>
+                            {% if s.amount and s.amount > 0 %}
+                            <div class="bookmark-amount">฿{{ "{:,.0f}".format(s.amount) }}</div>
+                            {% else %}
+                            <div class="bookmark-amount">เรียนฟรี</div>
+                            {% endif %}
+                        </div>
+                        <div style="display:flex; gap:0.5rem; align-items:center;">
+                            <button class="remove-btn" onclick="removeBookmark({{ s.id }})">
+                                🗑️ ลบออก
+                            </button>
+                            {% if s.apply_url %}
+                            <a href="{{ s.apply_url }}" target="_blank" class="btn btn-primary"
+                                style="font-size:12px; padding:5px 12px;">
+                                สมัคร →
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            <div class="empty-icon">⭐</div>
+            <h3>ยังไม่มีทุนที่บันทึกไว้</h3>
+            <p>กดดาว ⭐ ที่หน้าทุนทั้งหมดเพื่อบันทึกทุนที่สนใจไว้ที่นี่</p>
+            <a href="/scholarships" class="btn btn-primary" style="margin-top:1.5rem;">
+                ดูทุนทั้งหมด →
+            </a>
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    <script>
+        async function removeBookmark(scholarshipId) {
+            const card = document.getElementById("card-" + scholarshipId)
+
+            const res = await fetch("/api/bookmark/" + scholarshipId, { method: "POST" })
+            const data = await res.json()
+
+            if (data.action === "removed") {
+                card.style.transition = "opacity 0.3s, transform 0.3s"
+                card.style.opacity = "0"
+                card.style.transform = "scale(0.95)"
+                setTimeout(() => {
+                    card.remove()
+                    // อัปเดตจำนวน
+                    const remaining = document.querySelectorAll(".bookmark-card").length
+                    document.querySelector(".count-badge").textContent = remaining + " ทุน"
+                    // ถ้าไม่เหลือเลยให้ reload
+                    if (remaining === 0) location.reload()
+                }, 300)
+            }
+        }
+    </script>
+
+    {% endblock %}

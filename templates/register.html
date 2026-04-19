@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block title %}สมัครสมาชิก{% endblock %}
+{% block extra_css %}
+<style>
+  .register-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .register-box {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
+  }
+
+  .register-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .register-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--orange), var(--gold));
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 1rem;
+    box-shadow: 0 8px 24px rgba(255, 107, 43, 0.3);
+  }
+
+  .register-title {
+    font-family: 'Kanit', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark);
+  }
+
+  .register-sub {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .register-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    color: var(--text-light);
+  }
+
+  .register-footer a {
+    color: var(--orange);
+    text-decoration: none;
+    font-weight: 600;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="register-page">
+  <div class="register-box animate-fade-up">
+    <div class="register-header">
+      <div class="register-icon">🎓</div>
+      <div class="register-title">สมัครสมาชิก</div>
+      <div class="register-sub">สร้างบัญชีเพื่อรับแจ้งเตือนทุนการศึกษา</div>
+    </div>
+
+    {% if error %}<div class="alert alert-error">⚠️ {{ error }}</div>{% endif %}
+
+    <form method="POST">
+      <div class="form-group">
+        <label class="form-label">👤 ชื่อ-นามสกุล</label>
+        <input type="text" name="name" class="form-control" placeholder="สมชาย ใจดี" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">📧 Email</label>
+        <input type="email" name="email" class="form-control" placeholder="example@sut.ac.th" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">🔒 รหัสผ่าน</label>
+        <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">📊 GPA</label>
+          <input type="number" name="gpa" class="form-control" placeholder="3.50" step="0.01" min="0" max="4" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">🌏 สัญชาติ</label>
+          <select name="nationality" class="form-control">
+            <option value="ไทย">ไทย</option>
+            <option value="ต่างชาติ">ต่างชาติ</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">🏫 สำนักวิชา</label>
+        <select name="faculty" class="form-control">
+          <option value="">-- เลือกสำนักวิชา --</option>
+          <option value="วิทยาศาสตร์">สำนักวิชาวิทยาศาสตร์</option>
+          <option value="เทคโนโลยีสังคม">สำนักวิชาเทคโนโลยีสังคม</option>
+          <option value="เทคโนโลยีการเกษตร">สำนักวิชาเทคโนโลยีการเกษตร</option>
+          <option value="แพทยศาสตร์">สำนักวิชาแพทยศาสตร์</option>
+          <option value="พยาบาลศาสตร์">สำนักวิชาพยาบาลศาสตร์</option>
+          <option value="วิศวกรรมศาสตร์">สำนักวิชาวิศวกรรมศาสตร์</option>
+          <option value="ทันตแพทยศาสตร์">สำนักวิชาทันตแพทยศาสตร์</option>
+          <option value="สาธารณสุขศาสตร์">สำนักวิชาสาธารณสุขศาสตร์</option>
+          <option value="ศาสตร์และศิลป์ดิจิทัล">สำนักวิชาศาสตร์และศิลป์ดิจิทัล</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">📚 ระดับการศึกษา</label>
+        <select name="level" class="form-control">
+          <option value="ปริญญาตรี">ปริญญาตรี</option>
+          <option value="ปริญญาโท">ปริญญาโท</option>
+          <option value="ปริญญาเอก">ปริญญาเอก</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:0.85rem;">
+        สมัครสมาชิก →
+      </button>
+    </form>
+
+    <div class="register-footer">
+      มีบัญชีแล้ว? <a href="/login">เข้าสู่ระบบ</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

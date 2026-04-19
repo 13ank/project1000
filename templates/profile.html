@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% block title %}โปรไฟล์ของฉัน{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-page {
+        min-height: 100vh;
+        background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .profile-box {
+        background: var(--white);
+        border-radius: 24px;
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 560px;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
+    }
+
+    .profile-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--orange), var(--gold));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 1rem;
+        box-shadow: 0 8px 24px rgba(255, 107, 43, 0.3);
+    }
+
+    .profile-name {
+        font-family: 'Kanit', sans-serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--dark);
+    }
+
+    .profile-email {
+        color: var(--text-light);
+        font-size: 0.85rem;
+        margin-top: 0.3rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .section-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--orange);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin: 1.5rem 0 0.8rem;
+        padding-bottom: 0.4rem;
+        border-bottom: 2px solid var(--orange-light);
+    }
+
+    .alert-success {
+        background: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #a5d6a7;
+        border-radius: 10px;
+        padding: 0.8rem 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: var(--orange);
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <div class="profile-box animate-fade-up">
+
+        <a href="/dashboard" class="back-link">← กลับ Dashboard</a>
+
+        <div class="profile-header">
+            <div class="profile-avatar">👤</div>
+            <div class="profile-name">{{ student.name }}</div>
+            <div class="profile-email">{{ student.email }}</div>
+        </div>
+
+        <!-- แสดงข้อความสำเร็จ -->
+        {% if request.method == "GET" and request.args.get("saved") %}
+        <div class="alert-success">✅ บันทึกข้อมูลเรียบร้อยแล้ว</div>
+        {% endif %}
+
+        <form method="POST">
+
+            <!-- ข้อมูลทั่วไป -->
+            <div class="section-title">📋 ข้อมูลทั่วไป</div>
+
+            <div class="form-group">
+                <label class="form-label">👤 ชื่อ-นามสกุล</label>
+                <input type="text" name="name" class="form-control" value="{{ student.name }}" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">📧 Email</label>
+                <input type="email" class="form-control" value="{{ student.email }}" disabled
+                    style="background:#f5f5f5; color:#999;">
+                <small style="color:#999; font-size:0.75rem;">* ไม่สามารถเปลี่ยน Email ได้</small>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">📞 เบอร์โทรศัพท์</label>
+                <input type="text" name="phone" class="form-control" value="{{ student.phone or '' }}"
+                    placeholder="08X-XXX-XXXX">
+            </div>
+
+            <!-- ข้อมูลการศึกษา -->
+            <div class="section-title">🎓 ข้อมูลการศึกษา</div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">📊 GPA</label>
+                    <input type="number" name="gpa" class="form-control" value="{{ student.gpa }}" step="0.01" min="0"
+                        max="4" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">🌏 สัญชาติ</label>
+                    <select name="nationality" class="form-control">
+                        <option value="ไทย" {% if student.nationality=="ไทย" %}selected{% endif %}>ไทย</option>
+                        <option value="ต่างชาติ" {% if student.nationality=="ต่างชาติ" %}selected{% endif %}>ต่างชาติ
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🏫 สำนักวิชา</label>
+                <select name="faculty" class="form-control">
+                    <option value="วิทยาศาสตร์" {% if student.faculty=="วิทยาศาสตร์" %}selected{% endif %}>
+                        สำนักวิชาวิทยาศาสตร์</option>
+                    <option value="เทคโนโลยีสังคม" {% if student.faculty=="เทคโนโลยีสังคม" %}selected{% endif %}>
+                        สำนักวิชาเทคโนโลยีสังคม</option>
+                    <option value="เทคโนโลยีการเกษตร" {% if student.faculty=="เทคโนโลยีการเกษตร" %}selected{% endif %}>
+                        สำนักวิชาเทคโนโลยีการเกษตร</option>
+                    <option value="แพทยศาสตร์" {% if student.faculty=="แพทยศาสตร์" %}selected{% endif %}>
+                        สำนักวิชาแพทยศาสตร์</option>
+                    <option value="พยาบาลศาสตร์" {% if student.faculty=="พยาบาลศาสตร์" %}selected{% endif %}>
+                        สำนักวิชาพยาบาลศาสตร์</option>
+                    <option value="วิศวกรรมศาสตร์" {% if student.faculty=="วิศวกรรมศาสตร์" %}selected{% endif %}>
+                        สำนักวิชาวิศวกรรมศาสตร์</option>
+                    <option value="ทันตแพทยศาสตร์" {% if student.faculty=="ทันตแพทยศาสตร์" %}selected{% endif %}>
+                        สำนักวิชาทันตแพทยศาสตร์</option>
+                    <option value="สาธารณสุขศาสตร์" {% if student.faculty=="สาธารณสุขศาสตร์" %}selected{% endif %}>
+                        สำนักวิชาสาธารณสุขศาสตร์</option>
+                    <option value="ศาสตร์และศิลป์ดิจิทัล" {% if student.faculty=="ศาสตร์และศิลป์ดิจิทัล" %}selected{%
+                        endif %}>สำนักวิชาศาสตร์และศิลป์ดิจิทัล</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">📚 ระดับการศึกษา</label>
+                <select name="level" class="form-control">
+                    <option value="ปริญญาตรี" {% if student.level=="ปริญญาตรี" %}selected{% endif %}>ปริญญาตรี</option>
+                    <option value="ปริญญาโท" {% if student.level=="ปริญญาโท" %}selected{% endif %}>ปริญญาโท</option>
+                    <option value="ปริญญาเอก" {% if student.level=="ปริญญาเอก" %}selected{% endif %}>ปริญญาเอก</option>
+                </select>
+            </div>
+
+            <!-- เปลี่ยนรหัสผ่าน -->
+            <div class="section-title">🔒 เปลี่ยนรหัสผ่าน (ไม่บังคับ)</div>
+
+            <div class="form-group">
+                <label class="form-label">รหัสผ่านใหม่</label>
+                <input type="password" name="new_password" class="form-control"
+                    placeholder="เว้นว่างถ้าไม่ต้องการเปลี่ยน">
+            </div>
+
+            <button type="submit" class="btn btn-primary"
+                style="width:100%; justify-content:center; padding:0.85rem; margin-top:0.5rem;">
+                💾 บันทึกข้อมูล
+            </button>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}

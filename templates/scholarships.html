@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+{% block title %}ทุนทั้งหมด{% endblock %}
+
+{% block extra_css %}
+<style>
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .filter-input {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+  }
+
+  .filter-select {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+  }
+
+  .bookmark-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .bookmark-btn.active {
+    color: gold;
+  }
+
+  .scholarships-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 1.2rem;
+    margin-top: 1.5rem;
+  }
+
+  .s-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    transition: 0.3s;
+    cursor: pointer;
+  }
+
+  .s-card:hover {
+    transform: translateY(-6px);
+  }
+
+  .s-card-top {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    padding: 1.2rem;
+    color: white;
+  }
+
+  .s-card-title {
+    font-weight: 700;
+  }
+
+  .s-card-title a {
+    color: white;
+    text-decoration: none;
+  }
+
+  .s-card-title a:hover {
+    text-decoration: underline;
+  }
+
+  .s-card-body {
+    padding: 1rem 1.2rem;
+  }
+
+  .s-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .s-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+  }
+
+  .s-card-tag {
+    background: #f4f4f4;
+    padding: 3px 7px;
+    border-radius: 6px;
+    font-size: 12px;
+  }
+
+  .s-amount {
+    font-weight: 700;
+    color: #ff6b2b;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="hero-banner">
+  <div class="container">
+    <div class="hero-greeting">📋 ทุนการศึกษาทั้งหมด</div>
+    <div class="hero-name">
+      พบ <span>{{ scholarships|length }}</span> ทุน
+    </div>
+  </div>
+</div>
+
+<div class="container" style="padding-bottom:2rem;">
+
+  <div class="filter-bar">
+    <input type="text" id="searchInput" placeholder="🔍 ค้นหาทุน..." class="filter-input">
+
+    <select id="gpaFilter" class="filter-select">
+      <option value="">GPA ทั้งหมด</option>
+      <option value="2.00">GPA ≥ 2.00</option>
+      <option value="2.50">GPA ≥ 2.50</option>
+      <option value="3.00">GPA ≥ 3.00</option>
+      <option value="3.50">GPA ≥ 3.50</option>
+    </select>
+
+    <select id="facultyFilter" class="filter-select">
+      <option value="">ทุกสำนักวิชา</option>
+      <option value="วิทยาศาสตร์">สำนักวิชาวิทยาศาสตร์</option>
+      <option value="เทคโนโลยีสังคม">สำนักวิชาเทคโนโลยีสังคม</option>
+      <option value="เทคโนโลยีการเกษตร">สำนักวิชาเทคโนโลยีการเกษตร</option>
+      <option value="แพทยศาสตร์">สำนักวิชาแพทยศาสตร์</option>
+      <option value="พยาบาลศาสตร์">สำนักวิชาพยาบาลศาสตร์</option>
+      <option value="วิศวกรรมศาสตร์">สำนักวิชาวิศวกรรมศาสตร์</option>
+      <option value="ทันตแพทยศาสตร์">สำนักวิชาทันตแพทยศาสตร์</option>
+      <option value="สาธารณสุขศาสตร์">สำนักวิชาสาธารณสุขศาสตร์</option>
+      <option value="ศาสตร์และศิลป์ดิจิทัล">สำนักวิชาศาสตร์และศิลป์ดิจิทัล</option>
+    </select>
+
+    <select id="levelFilter" class="filter-select">
+      <option value="">ทุกระดับ</option>
+      <option value="ปริญญาตรี">ปริญญาตรี</option>
+      <option value="ปริญญาโท">ปริญญาโท</option>
+      <option value="ปริญญาเอก">ปริญญาเอก</option>
+    </select>
+  </div>
+
+  <div class="scholarships-grid" id="scholarshipGrid">
+
+    {% for s in scholarships %}
+    <div class="s-card" data-title="{{ s.title }}" data-faculty="{{ s.faculty }}" data-level="{{ s.level }}"
+      data-gpa="{{ s.min_gpa }}" onclick="goToDetail('{{ s.id }}')">
+
+      <div class="s-card-top">
+        <div>{{ s.source }}</div>
+
+        <div class="s-card-title">
+          <a href="/scholarship/{{ s.id }}" onclick="event.stopPropagation();">
+            {{ s.title }}
+          </a>
+        </div>
+
+        <div style="margin-top:5px">
+          {% if s.days_left <= 1 %} 🚨 พรุ่งนี้หมดเขต {% elif s.days_left <=7 %} ⚠️ เหลือ {{ s.days_left }} วัน {% else
+            %} 📅 เหลือ {{ s.days_left }} วัน {% endif %} </div>
+        </div>
+
+        <div class="s-card-body">
+          <div>{{ s.description }}</div>
+
+          <div class="s-card-tags">
+            <span class="s-card-tag">📚 {{ s.level }}</span>
+            <span class="s-card-tag">📊 GPA ≥ {{ s.min_gpa }}</span>
+            <span class="s-card-tag">🌏 {{ s.nationality }}</span>
+            <span class="s-card-tag">🏫 {{ s.faculty }}</span>
+          </div>
+
+          <div class="s-card-footer">
+            <div>
+              {% if s.amount and s.amount > 0 %}
+              <div class="s-amount">฿{{ "{:,.0f}".format(s.amount) }}</div>
+              {% else %}
+              <div class="s-amount">เรียนฟรี</div>
+              {% endif %}
+              <div style="font-size:12px;color:#777">📅 {{ s.deadline }}</div>
+            </div>
+
+            <div>
+              <button class="bookmark-btn" onclick="event.stopPropagation(); toggleBookmark(this)">⭐</button>
+
+              <a href="/scholarship/{{ s.id }}" class="btn btn-primary" style="font-size:12px"
+                onclick="event.stopPropagation();">
+                รายละเอียด →
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      {% endfor %}
+
+    </div>
+
+    <div id="noResult" style="display:none; text-align:center; padding:3rem; color:#999;">
+      🔍 ไม่พบทุนที่ตรงกับเงื่อนไข
+    </div>
+
+  </div>
+
+  <script>
+    const searchInput = document.getElementById("searchInput")
+    const gpaFilter = document.getElementById("gpaFilter")
+    const facultyFilter = document.getElementById("facultyFilter")
+    const levelFilter = document.getElementById("levelFilter")
+
+    function goToDetail(id) {
+      if (id) {
+        window.location.href = "/scholarship/" + id
+      }
+    }
+
+    function filterScholarships() {
+      const search = searchInput.value.toLowerCase()
+      const gpa = parseFloat(gpaFilter.value) || 0
+      const faculty = facultyFilter.value
+      const level = levelFilter.value
+
+      let visibleCount = 0
+
+      document.querySelectorAll(".s-card").forEach(card => {
+        const title = card.dataset.title.toLowerCase()
+        const cardFaculty = card.dataset.faculty
+        const cardLevel = card.dataset.level
+        const cardGpa = parseFloat(card.dataset.gpa) || 0
+
+        let show = true
+
+        if (search && !title.includes(search)) show = false
+        if (gpa && cardGpa < gpa) show = false
+        if (faculty && cardFaculty !== "ทุกคณะ" && cardFaculty !== faculty) show = false
+        if (level && cardLevel !== "ทุกระดับ" && cardLevel !== level) show = false
+
+        card.style.display = show ? "block" : "none"
+        if (show) visibleCount++
+      })
+
+      document.getElementById("noResult").style.display = visibleCount === 0 ? "block" : "none"
+    }
+
+    searchInput.addEventListener("keyup", filterScholarships)
+    gpaFilter.addEventListener("change", filterScholarships)
+    facultyFilter.addEventListener("change", filterScholarships)
+    levelFilter.addEventListener("change", filterScholarships)
+
+    function toggleBookmark(btn) {
+      btn.classList.toggle("active")
+    }
+  </script>
+
+  {% endblock %}
